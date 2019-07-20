@@ -7,8 +7,9 @@ public class BallController : MonoBehaviour
     private GameController gameController;
     private float force;
     private bool pinCollision;
-    public float MaxForce = 50;
     public bool canMove;
+    public float maxForce = 5000;
+    public float minForce = 1000;
 
     private void Awake()
     {
@@ -29,13 +30,13 @@ public class BallController : MonoBehaviour
         {
             if (Input.GetMouseButton(0))
             {
-                force += Time.deltaTime;
+                force += 10;
             }
 
             if (Input.GetMouseButtonUp(0))
             {
                 canMove = false;
-                PushBall(Mathf.Clamp(force, 0, MaxForce));
+                PushBall(Mathf.Clamp(force, minForce, maxForce));
                 force = 0;
             }
         }
@@ -44,7 +45,9 @@ public class BallController : MonoBehaviour
 
     private void PushBall(float forceToApply)
     {
+        this.transform.Rotate(transform.up, 10f);
         rigidbody.AddForce(transform.forward * forceToApply);
+
     }
 
     private void OnCollisionEnter(Collision collision)
