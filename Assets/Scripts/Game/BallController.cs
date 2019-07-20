@@ -4,7 +4,8 @@ public class BallController : MonoBehaviour
 {
     private Rigidbody rigidbody;
     private float force;
-    public float MaxForce = 50;
+    public float maxForce = 5000;
+    public float minForce = 1000;
     public bool canMove = false;
 
     private void Awake()
@@ -23,13 +24,13 @@ public class BallController : MonoBehaviour
         {
             if (Input.GetMouseButton(0))
             {
-                force += Time.deltaTime;
+                force+=10;
             }
 
             if (Input.GetMouseButtonUp(0))
             {
                 canMove = false;
-                PushBall(Mathf.Clamp(force, 0, MaxForce));
+                PushBall(Mathf.Clamp(force, minForce, maxForce));
                 force = 0;
             }
         }
@@ -37,7 +38,9 @@ public class BallController : MonoBehaviour
 
     private void PushBall(float forceToApply)
     {
+        this.transform.Rotate(transform.up, 10f);
         rigidbody.AddForce(transform.forward * forceToApply);
+ 
     }
 
     private void OnCollisionEnter(Collision collision)
