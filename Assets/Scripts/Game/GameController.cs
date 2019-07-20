@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
     private int lastGames;
     private float timeToCheck = 5;
     private float checkPinTimer;
+    [HideInInspector]
     public bool checkPins;
 
     private void Awake()
