@@ -1493,7 +1493,7 @@ GameObject:
   - component: {fileID: 1795698034}
   m_Layer: 0
   m_Name: GameController
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1510,6 +1510,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fb3bb1fe2637b04aa62690a930e57c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  checkPins: 0
 --- !u!4 &1795698035
 Transform:
   m_ObjectHideFlags: 0

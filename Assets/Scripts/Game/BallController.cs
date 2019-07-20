@@ -2,19 +2,25 @@
 
 public class BallController : MonoBehaviour
 {
+    private Vector3 initialPosition;
     private Rigidbody rigidbody;
+    private GameController gameController;
     private float force;
+    private bool pinCollision;
     public float MaxForce = 50;
-    public bool canMove = false;
+    public bool canMove;
 
     private void Awake()
     {
         rigidbody = this.GetComponent<Rigidbody>();
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
     private void Start()
     {
+        pinCollision = false;
         canMove = true;
+        initialPosition = transform.position;
     }
 
     void Update()
@@ -33,6 +39,7 @@ public class BallController : MonoBehaviour
                 force = 0;
             }
         }
+        CheckBallOutOfSCreen();
     }
 
     private void PushBall(float forceToApply)
@@ -44,9 +51,22 @@ public class BallController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Pin")
         {
-            //Activate timer and check if pins are moving??
+            pinCollision = true;
+            gameController.checkPins = true;
         }
     }
 
+    private void CheckBallOutOfSCreen()
+    {
+        if (transform.position.y < -3 && !pinCollision)
+        {
+            gameController.checkPins = true;
+        }
+    }
 
+    public void ResetBall()
+    {
+        pinCollision = false;
+        transform.position = initialPosition;
+    }
 }
