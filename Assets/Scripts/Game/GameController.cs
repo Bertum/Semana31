@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour
     private float checkPinTimer;
     [HideInInspector]
     public bool checkPins;
+    private Outline outlinePlayerOne, outlinePlayerTwo;
 
     private void Awake()
     {
@@ -30,6 +31,9 @@ public class GameController : MonoBehaviour
         ballController = GameObject.FindGameObjectWithTag("Ball").GetComponent<BallController>();
         txtScorePlayerOne = GameObject.Find("GameUI/PanelPlayerOne/Score").GetComponent<Text>();
         txtScorePlayerTwo = GameObject.Find("GameUI/PanelPlayerTwo/Score").GetComponent<Text>();
+        outlinePlayerOne = GameObject.Find("GameUI/PanelPlayerOne").GetComponent<Outline>();
+        outlinePlayerTwo = GameObject.Find("GameUI/PanelPlayerTwo").GetComponent<Outline>();
+        outlinePlayerTwo.enabled = false;
     }
 
     void Start()
@@ -95,6 +99,8 @@ public class GameController : MonoBehaviour
     {
         ResetPins();
         firstPlayerTurn = !firstPlayerTurn;
+        outlinePlayerOne.enabled = firstPlayerTurn ? true : false;
+        outlinePlayerTwo.enabled = firstPlayerTurn ? false : true;
         ballController.canMove = true;
         playerHasToPlayAgain = false;
     }
