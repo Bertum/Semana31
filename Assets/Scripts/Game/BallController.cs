@@ -41,7 +41,7 @@ public class BallController : MonoBehaviour
 
     void Update()
     {
-        if (!powerSelected)
+        if (!powerSelected && directionSelected)
         {
             if (powerSlider.value >= maxForce)
             {

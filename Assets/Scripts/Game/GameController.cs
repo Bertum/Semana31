@@ -30,15 +30,15 @@ public class GameController : MonoBehaviour
         ballController = GameObject.FindGameObjectWithTag("Ball").GetComponent<BallController>();
         txtScorePlayerOne = GameObject.Find("GameUI/PanelPlayerOne/Score").GetComponent<Text>();
         txtScorePlayerTwo = GameObject.Find("GameUI/PanelPlayerTwo/Score").GetComponent<Text>();
+    }
+
+    void Start()
+    {
         foreach (var pin in bowlPins)
         {
             pinInitialPositions.Add(pin.transform.position);
             pinInitialRotations.Add(pin.transform.rotation);
         }
-    }
-
-    void Start()
-    {
         checkPins = false;
         checkPinTimer = 0;
         lastGames = 0;
@@ -76,7 +76,7 @@ public class GameController : MonoBehaviour
             scorePlayerTwo += points;
         }
         UpdateUI();
-        ResetPins();
+        ChangeTurn();
         ballController.ResetBall();
     }
 
@@ -110,8 +110,8 @@ public class GameController : MonoBehaviour
         {
             if (Mathf.Abs(pin.transform.rotation.x) > 0.1f && !tippedPins.Contains(pin))
             {
-                tippedPins.Add(pin);
                 pin.SetActive(false);
+                tippedPins.Add(pin);
             }
         }
         if (tippedPins.Count == bowlPins.Count && !playerHasToPlayAgain)
@@ -155,8 +155,10 @@ public class GameController : MonoBehaviour
         for (int i = 0; i < bowlPins.Count; i++)
         {
             bowlPins[i].SetActive(true);
-            bowlPins[i].transform.position = pinInitialPositions[i];
+            bowlPins[i].GetComponent<Rigidbody>().isKinematic = true;
             bowlPins[i].transform.rotation = pinInitialRotations[i];
+            bowlPins[i].transform.position = pinInitialPositions[i];
+            bowlPins[i].GetComponent<Rigidbody>().isKinematic = false;
         }
     }
     #endregion
