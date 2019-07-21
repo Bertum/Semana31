@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,11 +10,12 @@ public class GameController : MonoBehaviour
     private Text txtScorePlayerOne, txtScorePlayerTwo;
     private List<GameObject> bowlPins;
     private List<GameObject> tippedPins;
-    private List<Transform> initialTransforms;
+    private List<Vector3> pinInitialPositions;
+    private List<Quaternion> pinInitialRotations;
     private bool playerHasToPlayAgain;
     private int currentTurn;
     private int lastGames;
-    private float timeToCheck = 5;
+    private float timeToCheck = 10;
     private float checkPinTimer;
     [HideInInspector]
     public bool checkPins;
@@ -24,14 +24,16 @@ public class GameController : MonoBehaviour
     {
         tippedPins = new List<GameObject>();
         bowlPins = new List<GameObject>();
-        initialTransforms = new List<Transform>();
+        pinInitialPositions = new List<Vector3>();
+        pinInitialRotations = new List<Quaternion>();
         bowlPins.AddRange(GameObject.FindGameObjectsWithTag("Pin"));
         ballController = GameObject.FindGameObjectWithTag("Ball").GetComponent<BallController>();
         txtScorePlayerOne = GameObject.Find("GameUI/PanelPlayerOne/Score").GetComponent<Text>();
         txtScorePlayerTwo = GameObject.Find("GameUI/PanelPlayerTwo/Score").GetComponent<Text>();
         foreach (var pin in bowlPins)
         {
-            initialTransforms.Add(pin.transform);
+            pinInitialPositions.Add(pin.transform.position);
+            pinInitialRotations.Add(pin.transform.rotation);
         }
     }
 
@@ -74,6 +76,7 @@ public class GameController : MonoBehaviour
             scorePlayerTwo += points;
         }
         UpdateUI();
+        ResetPins();
         ballController.ResetBall();
     }
 
@@ -103,9 +106,14 @@ public class GameController : MonoBehaviour
         //Cada bolo 1 punto
         //Ronda 10 si haces pleno tienes 2 adicionales
         //Check if x or z rotation is less than 60 and is not in the list
-        tippedPins.AddRange(bowlPins.Where(w => (w.transform.rotation.x < 60 || w.transform.rotation.z < 60)
-                                && (w.transform.rotation.x > 1 || w.transform.rotation.z > 1)
-                                && !tippedPins.Contains(w)).ToList());
+        foreach (var pin in bowlPins)
+        {
+            if (Mathf.Abs(pin.transform.rotation.x) > 0.1f && !tippedPins.Contains(pin))
+            {
+                tippedPins.Add(pin);
+                pin.SetActive(false);
+            }
+        }
         if (tippedPins.Count == bowlPins.Count && !playerHasToPlayAgain)
         {
             SetPoints(15);
@@ -138,6 +146,7 @@ public class GameController : MonoBehaviour
                 }
             }
         }
+        ballController.ResetBall();
     }
 
     private void ResetPins()
@@ -145,8 +154,9 @@ public class GameController : MonoBehaviour
         tippedPins.Clear();
         for (int i = 0; i < bowlPins.Count; i++)
         {
-            bowlPins[i].transform.position = initialTransforms[i].position;
-            bowlPins[i].transform.rotation = initialTransforms[i].rotation;
+            bowlPins[i].SetActive(true);
+            bowlPins[i].transform.position = pinInitialPositions[i];
+            bowlPins[i].transform.rotation = pinInitialRotations[i];
         }
     }
     #endregion

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class BallController : MonoBehaviour
 {
     private Vector3 initialPosition;
+    private Quaternion initialRotation;
     private Rigidbody rigidbody;
     private GameController gameController;
     private float force;
@@ -25,10 +26,11 @@ public class BallController : MonoBehaviour
 
     private void Start()
     {
+        initialPosition = transform.position;
+        initialRotation = transform.rotation;
         force = minForce;
         pinCollision = false;
         canMove = true;
-        initialPosition = transform.position;
         powerSlider.value = minForce;
     }
 
@@ -36,28 +38,23 @@ public class BallController : MonoBehaviour
     {
         if (!powerSelected)
         {
-            //force += 10;
-            //force = Mathf.Clamp(force, minForce, maxForce);
-            Debug.Log("slider: " + powerSlider.value);
-            Debug.Log("maxForce: " + maxForce);
-            if (powerSlider.value >= maxForce) {
-                Debug.Log("entro a superior");
-                increase = false;
-            } else if (powerSlider.value <= minForce)
+            if (powerSlider.value >= maxForce)
             {
-                Debug.Log("entro a inferior");
+                increase = false;
+            }
+            else if (powerSlider.value <= minForce)
+            {
                 increase = true;
             }
-            powerSlider.value += increase ? 10 : -10 ;
-            Debug.Log("slider: " + powerSlider.value);
+            powerSlider.value += increase ? 10 : -10;
         }
         if (canMove)
         {
             if (Input.GetMouseButtonDown(0))
             {
                 powerSelected = true;
+                canMove = false;
                 force = powerSlider.value;
-                Debug.Log(force);
                 PushBall(force);
             }
         }
@@ -66,7 +63,6 @@ public class BallController : MonoBehaviour
 
     private void PushBall(float forceToApply)
     {
-        //this.transform.Rotate(transform.up, 10f);
         rigidbody.AddForce(transform.forward * forceToApply);
 
     }
@@ -90,10 +86,14 @@ public class BallController : MonoBehaviour
 
     public void ResetBall()
     {
+        powerSelected = false;
+        canMove = true;
+        powerSlider.value = minForce;
         pinCollision = false;
         rigidbody.velocity = Vector3.zero;
         rigidbody.angularVelocity = Vector3.zero;
         rigidbody.Sleep();
-        transform.position = initialPosition;
+        this.transform.position = initialPosition;
+        this.transform.rotation = initialRotation;
     }
 }
