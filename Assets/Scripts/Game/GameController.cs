@@ -84,6 +84,7 @@ public class GameController : MonoBehaviour
 
     private void ChangeTurn()
     {
+        tippedPins.Clear();
         firstPlayerTurn = !firstPlayerTurn;
         ballController.canMove = true;
         playerHasToPlayAgain = false;
@@ -97,7 +98,7 @@ public class GameController : MonoBehaviour
         //Ronda 10 si haces pleno tienes 2 adicionales
         //Check if x or z rotation is less than 60 and is not in the list
         tippedPins.AddRange(bowlPins.Where(w => (w.transform.rotation.x < 60 || w.transform.rotation.z < 60)
-                                && (w.transform.rotation.x > 0 || w.transform.rotation.z > 0)
+                                && (w.transform.rotation.x > 1 || w.transform.rotation.z > 1)
                                 && !tippedPins.Contains(w)).ToList());
         if (tippedPins.Count == bowlPins.Count && !playerHasToPlayAgain)
         {
