@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     private Text txtScorePlayerOne, txtScorePlayerTwo;
     private List<GameObject> bowlPins;
     private List<GameObject> tippedPins;
+    private List<Transform> initialTransforms;
     private bool playerHasToPlayAgain;
     private int currentTurn;
     private int lastGames;
@@ -23,10 +24,15 @@ public class GameController : MonoBehaviour
     {
         tippedPins = new List<GameObject>();
         bowlPins = new List<GameObject>();
+        initialTransforms = new List<Transform>();
         bowlPins.AddRange(GameObject.FindGameObjectsWithTag("Pin"));
         ballController = GameObject.FindGameObjectWithTag("Ball").GetComponent<BallController>();
         txtScorePlayerOne = GameObject.Find("GameUI/PanelPlayerOne/Score").GetComponent<Text>();
         txtScorePlayerTwo = GameObject.Find("GameUI/PanelPlayerTwo/Score").GetComponent<Text>();
+        foreach (var pin in bowlPins)
+        {
+            initialTransforms.Add(pin.transform);
+        }
     }
 
     void Start()
@@ -84,6 +90,7 @@ public class GameController : MonoBehaviour
 
     private void ChangeTurn()
     {
+        ResetPins();
         firstPlayerTurn = !firstPlayerTurn;
         ballController.canMove = true;
         playerHasToPlayAgain = false;
@@ -96,12 +103,15 @@ public class GameController : MonoBehaviour
         //Cada bolo 1 punto
         //Ronda 10 si haces pleno tienes 2 adicionales
         //Check if x or z rotation is less than 60 and is not in the list
-        tippedPins.AddRange(bowlPins.Where(w => (w.transform.rotation.x < 60 || w.transform.rotation.z < 60) && !tippedPins.Contains(w)).ToList());
+        tippedPins.AddRange(bowlPins.Where(w => (w.transform.rotation.x < 60 || w.transform.rotation.z < 60)
+                                && (w.transform.rotation.x > 1 || w.transform.rotation.z > 1)
+                                && !tippedPins.Contains(w)).ToList());
         if (tippedPins.Count == bowlPins.Count && !playerHasToPlayAgain)
         {
             SetPoints(15);
             if (currentTurn == 10 && lastGames < 2)
             {
+                ResetPins();
                 lastGames++;
             }
             else
@@ -127,6 +137,16 @@ public class GameController : MonoBehaviour
                     SetPoints(tippedPins.Count);
                 }
             }
+        }
+    }
+
+    private void ResetPins()
+    {
+        tippedPins.Clear();
+        for (int i = 0; i < bowlPins.Count; i++)
+        {
+            bowlPins[i].transform.position = initialTransforms[i].position;
+            bowlPins[i].transform.rotation = initialTransforms[i].rotation;
         }
     }
     #endregion

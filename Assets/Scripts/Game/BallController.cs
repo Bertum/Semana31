@@ -91,6 +91,9 @@ public class BallController : MonoBehaviour
     public void ResetBall()
     {
         pinCollision = false;
+        rigidbody.velocity = Vector3.zero;
+        rigidbody.angularVelocity = Vector3.zero;
+        rigidbody.Sleep();
         transform.position = initialPosition;
     }
 }
