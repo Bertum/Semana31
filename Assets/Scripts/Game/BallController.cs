@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class BallController : MonoBehaviour
 {
@@ -7,37 +8,57 @@ public class BallController : MonoBehaviour
     private GameController gameController;
     private float force;
     private bool pinCollision;
+    public Slider powerSlider;
+    private bool powerSelected;
     public bool canMove;
-    public float maxForce = 5000;
+    public bool increase;
+    public float maxForce = 4000;
     public float minForce = 1000;
 
     private void Awake()
     {
         rigidbody = this.GetComponent<Rigidbody>();
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        increase = true;
+        powerSelected = false;
     }
 
     private void Start()
     {
+        force = minForce;
         pinCollision = false;
         canMove = true;
         initialPosition = transform.position;
+        powerSlider.value = minForce;
     }
 
     void Update()
     {
+        if (!powerSelected)
+        {
+            //force += 10;
+            //force = Mathf.Clamp(force, minForce, maxForce);
+            Debug.Log("slider: " + powerSlider.value);
+            Debug.Log("maxForce: " + maxForce);
+            if (powerSlider.value >= maxForce) {
+                Debug.Log("entro a superior");
+                increase = false;
+            } else if (powerSlider.value <= minForce)
+            {
+                Debug.Log("entro a inferior");
+                increase = true;
+            }
+            powerSlider.value += increase ? 10 : -10 ;
+            Debug.Log("slider: " + powerSlider.value);
+        }
         if (canMove)
         {
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButtonDown(0))
             {
-                force += 10;
-            }
-
-            if (Input.GetMouseButtonUp(0))
-            {
-                canMove = false;
-                PushBall(Mathf.Clamp(force, minForce, maxForce));
-                force = 0;
+                powerSelected = true;
+                force = powerSlider.value;
+                Debug.Log(force);
+                PushBall(force);
             }
         }
         CheckBallOutOfSCreen();
@@ -45,7 +66,7 @@ public class BallController : MonoBehaviour
 
     private void PushBall(float forceToApply)
     {
-        this.transform.Rotate(transform.up, 10f);
+        //this.transform.Rotate(transform.up, 10f);
         rigidbody.AddForce(transform.forward * forceToApply);
 
     }
