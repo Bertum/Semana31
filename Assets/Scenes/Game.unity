@@ -1646,8 +1646,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74803d06954861d4cb991fad8b240a4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxForce: 50
   canMove: 0
+  maxForce: 5000
+  minForce: 1000
 --- !u!1 &1989653603
 GameObject:
   m_ObjectHideFlags: 0
@@ -1807,7 +1808,7 @@ PrefabInstance:
     - target: {fileID: 301541371842685183, guid: ba3b22fe958b8da419ed2babc365a04f,
         type: 3}
       propertyPath: m_Name
-      value: Canvas
+      value: GameUI
       objectReference: {fileID: 0}
     - target: {fileID: 301541371842685171, guid: ba3b22fe958b8da419ed2babc365a04f,
         type: 3}
