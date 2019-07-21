@@ -6,9 +6,11 @@ public class BallController : MonoBehaviour
     private Vector3 initialPosition;
     private Quaternion initialRotation;
     private Rigidbody rigidbody;
+    private GameObject pointer;
     private GameController gameController;
+    private LineRenderer lineRenderer;
     private float force;
-    private bool pinCollision;
+    private bool pinCollision, directionSelected;
     public Slider powerSlider;
     private bool powerSelected;
     public bool canMove;
@@ -18,10 +20,13 @@ public class BallController : MonoBehaviour
 
     private void Awake()
     {
+        lineRenderer = this.GetComponent<LineRenderer>();
         rigidbody = this.GetComponent<Rigidbody>();
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        pointer = GameObject.FindGameObjectWithTag("Pointer");
         increase = true;
         powerSelected = false;
+        directionSelected = false;
     }
 
     private void Start()
@@ -48,7 +53,7 @@ public class BallController : MonoBehaviour
             }
             powerSlider.value += increase ? 10 : -10;
         }
-        if (canMove)
+        if (canMove && directionSelected)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -59,12 +64,21 @@ public class BallController : MonoBehaviour
             }
         }
         CheckBallOutOfSCreen();
+        if (!directionSelected)
+        {
+            lineRenderer.SetPosition(0, transform.position);
+            lineRenderer.SetPosition(1, pointer.transform.position);
+            transform.LookAt(pointer.transform);
+            if (Input.GetMouseButtonDown(0))
+            {
+                directionSelected = true;
+            }
+        }
     }
 
     private void PushBall(float forceToApply)
     {
         rigidbody.AddForce(transform.forward * forceToApply);
-
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -95,5 +109,6 @@ public class BallController : MonoBehaviour
         rigidbody.Sleep();
         this.transform.position = initialPosition;
         this.transform.rotation = initialRotation;
+        directionSelected = false;
     }
 }
