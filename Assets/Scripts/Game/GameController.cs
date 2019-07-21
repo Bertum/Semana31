@@ -96,7 +96,9 @@ public class GameController : MonoBehaviour
         //Cada bolo 1 punto
         //Ronda 10 si haces pleno tienes 2 adicionales
         //Check if x or z rotation is less than 60 and is not in the list
-        tippedPins.AddRange(bowlPins.Where(w => (w.transform.rotation.x < 60 || w.transform.rotation.z < 60) && !tippedPins.Contains(w)).ToList());
+        tippedPins.AddRange(bowlPins.Where(w => (w.transform.rotation.x < 60 || w.transform.rotation.z < 60)
+                                && (w.transform.rotation.x > 0 || w.transform.rotation.z > 0)
+                                && !tippedPins.Contains(w)).ToList());
         if (tippedPins.Count == bowlPins.Count && !playerHasToPlayAgain)
         {
             SetPoints(15);
